@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const Login = () => {
   const [errors, setErrors] = useState([]);
 
+  // Const for pop up messages when log in and logout.
+  const [showAlertMessage, setShowAlertMessage] = useState(false);
+  const [showLogoutMessage, setShowLogoutMessage] = useState(false);
+
+  // Handle Log in event, use jwt for security, redirect to home page after log in.
   const handleSubmit = (event) => {
     event.preventDefault();
     setErrors([]);
-
     const formData = new FormData(event.target);
     const username = formData.get("username");
     const password = formData.get("password");
@@ -30,15 +34,28 @@ export const Login = () => {
         console.log(data);
         localStorage.setItem("userId", data.id.toString());
         localStorage.setItem("jwt", data.token);
-        console.log("User ID acquired:", data.id);
-        localStorage.setItem("flashMessage", data.id.toString());
-        window.location.href = "/";
+        setShowAlertMessage(true);
+        setTimeout(() => {
+          setShowAlertMessage(false);
+          window.location.href = "/";
+        }, 1500);
       })
       .catch((error) => {
         console.error(error);
         setErrors(["An error occurred. Please try again."]);
       });
   };
+
+  // If logout event is detected, pop up log out message and close after 1.5 seconds.
+  useEffect(() => {
+    if (localStorage.getItem("loggedOut")) {
+      setShowLogoutMessage(true);
+      localStorage.removeItem("loggedOut");
+      setTimeout(() => {
+        setShowLogoutMessage(false);
+      }, 1500);
+    }
+  }, []);
 
   return (
     <div className="d-flex justify-content-center align-items-center min-vh-90 bg-light pb-5">
@@ -51,6 +68,20 @@ export const Login = () => {
             ))}
           </div>
         )}
+
+        {/* Show log out message if redirect from log out event */}
+        {showLogoutMessage && (
+          <div
+            className="alert alert-success d-flex align-items-center position-relative mt-3"
+            role="alert"
+            style={{ overflow: "hidden" }}
+          >
+            <i className="bi bi-check-circle-fill me-2"></i>
+            <div>Logged out successfully!</div>
+          </div>
+        )}
+
+        {/* Log in information */}
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="username" className="form-label">
@@ -79,6 +110,18 @@ export const Login = () => {
           <button type="submit" className="btn btn-primary w-100">
             Login
           </button>
+
+          {/* Show log in message when done */}
+          {showAlertMessage && (
+            <div
+              className="alert alert-success d-flex align-items-center position-relative mt-3"
+              role="alert"
+              style={{ overflow: "hidden" }}
+            >
+              <i className="bi bi-check-circle-fill me-2"></i>
+              <div>Logged in successfully!</div>
+            </div>
+          )}
         </form>
       </div>
     </div>

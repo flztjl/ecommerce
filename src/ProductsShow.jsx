@@ -9,6 +9,7 @@ export function ProductsShow() {
   const [showAddedMessage, setShowAddedMessage] = useState(false);
   const params = useParams();
 
+  // Fetch product detail information and set first image as main
   useEffect(() => {
     fetch(`https://dummyjson.com/products/${params.id}`)
       .then((res) => res.json())
@@ -23,6 +24,7 @@ export function ProductsShow() {
       );
   }, [params.id]);
 
+  // Select quantity and add to cart
   const handleAddToCart = () => {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     const productToAdd = {
@@ -54,6 +56,7 @@ export function ProductsShow() {
   return (
     <div className="container mt-5">
       <div className="row">
+        {/* Thumbnails for product images, highlighting the selected */}
         <div className="col-md-1">
           {product.images.map((image, index) => (
             <img
@@ -83,6 +86,7 @@ export function ProductsShow() {
         <div className="col-md-4">
           <div className="card">
             <div className="card-body">
+              {/* Quantity select box */}
               <div className="mb-3">
                 <label htmlFor="quantity" className="form-label">
                   Quantity:
@@ -101,6 +105,8 @@ export function ProductsShow() {
                   ))}
                 </select>
               </div>
+
+              {/* Add to cart button */}
               <div className="d-flex align-items-center mt-3">
                 <button className="btn btn-warning" onClick={handleAddToCart}>
                   Add to Cart

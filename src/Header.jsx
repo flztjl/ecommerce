@@ -7,12 +7,15 @@ export const Header = () => {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const navigate = useNavigate();
+
+  // Search actions, navigate to the selected result and clear the search results.
   const handleSearchSelect = (itemId) => {
-    setSuggestions([]); // Clears the search suggestions
+    setSuggestions([]);
     setQuery("");
     navigate(`/products/${itemId}`);
   };
 
+  // Check the keyword with product list first, if no match, check category then.
   useEffect(() => {
     if (query.length > 1) {
       const fetchSuggestions = async () => {
@@ -46,6 +49,7 @@ export const Header = () => {
     <header>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="container-fluid">
+          {/* Shop logo */}
           <Link className="navbar-brand" to="/">
             <img
               src={logoImage}
@@ -68,6 +72,7 @@ export const Header = () => {
             className="collapse navbar-collapse justify-content-between"
             id="navbarContent"
           >
+            {/* Home and products link */}
             <ul className="navbar-nav">
               <li className="nav-item">
                 <Link className="nav-link" to="/">
@@ -81,7 +86,7 @@ export const Header = () => {
               </li>
             </ul>
 
-            {/* Search Bar Container */}
+            {/* Search Bar */}
             <form
               className="d-flex position-relative"
               onSubmit={(e) => e.preventDefault()}
@@ -167,6 +172,7 @@ export const Header = () => {
                 </ul>
               </div>
 
+              {/* Shopping cart */}
               <Link className="btn btn-outline-dark ms-2" to="/shoppingcart">
                 <i className="bi bi-cart-fill"></i>
               </Link>

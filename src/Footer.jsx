@@ -1,13 +1,14 @@
 export const Footer = () => {
   return (
     <footer className="bg-light text-secondary py-5">
+      {/* Left column */}
       <div className="container">
         <div className="row g-4">
           <div className="col-12 col-md-6 col-lg">
             <p>
               Lei Jia <br /> University of Nevada, Las Vegas
             </p>
-            <p>ssrsrfy.jl@gmail.com</p>
+            <p>jial5@unlv.nevada.edu</p>
             <div className="d-flex justify-content-start gap-2">
               <a href="https://www.facebook.com" className="text-secondary">
                 <i className="bi bi-facebook" style={{ fontSize: "24px" }}></i>
@@ -147,6 +148,7 @@ export const Footer = () => {
         </div>
       </div>
 
+      {/* Copyright */}
       <div className="bg-white text-center py-3 mt-4">
         <p className="mb-0 text-black">
           Copyright © 2024. All Rights Reserved. Designed by Lei Jia.

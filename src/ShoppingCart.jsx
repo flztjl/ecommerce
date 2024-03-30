@@ -8,6 +8,7 @@ export const ShoppingCart = () => {
     setCartedProducts(cart);
   }, []);
 
+  // Quantity change function
   const handleQuantityChange = (productId, newQuantity) => {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     cart = cart.map((product) => {
@@ -20,6 +21,7 @@ export const ShoppingCart = () => {
     setCartedProducts(cart);
   };
 
+  // Product remove function
   const handleRemove = (productId) => {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     cart = cart.filter((product) => product.id !== productId);
@@ -27,6 +29,7 @@ export const ShoppingCart = () => {
     setCartedProducts(cart);
   };
 
+  // Message shows when empty cart
   if (cartedProducts.length === 0) {
     return (
       <div
@@ -51,6 +54,7 @@ export const ShoppingCart = () => {
         Shopping Cart
       </h1>
       <div style={{ display: "flex", flexDirection: "column" }}>
+        {/* List all the products in the cart */}
         {cartedProducts.map((product) => (
           <div
             key={product.id}
@@ -63,6 +67,7 @@ export const ShoppingCart = () => {
               marginBottom: "10px",
             }}
           >
+            {/* Product thumbnail and title */}
             <div style={{ display: "flex", alignItems: "center" }}>
               <img
                 src={product.thumbnail}
@@ -74,6 +79,8 @@ export const ShoppingCart = () => {
                   borderRadius: "5px",
                 }}
               />
+
+              {/* Quantity */}
               <div style={{ marginLeft: "10px" }}>
                 <p style={{ fontSize: "16px", fontWeight: "500" }}>
                   {product.title}
@@ -85,6 +92,8 @@ export const ShoppingCart = () => {
                   >
                     Quantity:
                   </label>
+
+                  {/* Quantity change button */}
                   <select
                     id={`quantity-${product.id}`}
                     name="quantity"
@@ -93,6 +102,7 @@ export const ShoppingCart = () => {
                       handleQuantityChange(product.id, Number(e.target.value))
                     }
                     className="form-select"
+                    style={{ width: "100px" }}
                   >
                     {[...Array(30).keys()].map((num) => (
                       <option key={num + 1} value={num + 1}>
@@ -103,6 +113,8 @@ export const ShoppingCart = () => {
                 </div>
               </div>
             </div>
+
+            {/* Product remove button */}
             <div>
               <button
                 onClick={() => handleRemove(product.id)}

@@ -4,6 +4,7 @@ import backgroundImage from "./assets/banner.jpg";
 export const Home = () => {
   return (
     <>
+      {/* Home page background */}
       <div
         className="d-flex flex-column justify-content-center align-items-center text-center bg-cover bg-center vh-100"
         style={{
@@ -20,6 +21,8 @@ export const Home = () => {
           <h2 className="display-4 fw-bold text-white mb-4">
             Online Shopping Can Never be So Wonderful!
           </h2>
+
+          {/* Link button to all products */}
           <Link
             to="/products"
             className="btn btn-primary btn-lg rounded-pill"

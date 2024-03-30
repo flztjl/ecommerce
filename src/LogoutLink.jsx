@@ -6,8 +6,10 @@ export function LogoutLink() {
     delete axios.defaults.headers.common["Authorization"];
     localStorage.removeItem("jwt");
     localStorage.removeItem("user_role");
-    localStorage.setItem("flashMessage", "Logged out successfully!");
-    window.location.href = "/";
+
+    // Set log out to true in localStorage. Then navigate to log in page and show log out message.
+    localStorage.setItem("loggedOut", "true");
+    window.location.href = "/Login";
   };
 
   return (

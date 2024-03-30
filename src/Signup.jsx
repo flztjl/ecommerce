@@ -1,20 +1,21 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 export const Signup = () => {
-  const [errors, setErrors] = useState([]);
+  const [setErrors] = useState([]);
   const [userName, setUserName] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [status, setStatus] = useState(null);
+  const [setStatus] = useState(null);
+  const [showAlertMessage, setShowAlertMessage] = useState(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     setErrors([]);
+
+    // Set const required for signup
     const formData = new FormData(event.target);
     const firstName = formData.get("firstname");
     const lastName = formData.get("lastname");
@@ -23,6 +24,7 @@ export const Signup = () => {
     const password = formData.get("password");
     const passwordConfirmation = formData.get("password_confirmation");
 
+    // Post filled sign up information, pop up signed up message if sucessed and redirect to log in page
     fetch("https://dummyjson.com/users/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -37,16 +39,17 @@ export const Signup = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         console.log("User created successfully with ID:", data.id);
-        localStorage.setItem("flashMessage", "User created successfully!");
-        window.location.href = "/login";
+        setShowAlertMessage(true);
+        setTimeout(() => {
+          setShowAlertMessage(false);
+          window.location.href = "/Login";
+        }, 1500);
       })
       .catch((error) => {
         console.error(error);
         setErrors(["An error occurred. Please try again."]);
-        setStatus("error");
-        toast.error("An error occurred. Please try again.");
+        setStatus("Error");
       });
   };
 
@@ -72,20 +75,8 @@ export const Signup = () => {
       >
         Signup
       </h1>
-      {status && (
-        <img
-          src={`https://http.cat/${status}`}
-          style={{ display: "block", margin: "0 auto", marginBottom: "12px" }}
-          alt="Status"
-        />
-      )}
-      <ul>
-        {errors.map((error, index) => (
-          <li key={index} style={{ color: "#ff0000", fontSize: "14px" }}>
-            {error}
-          </li>
-        ))}
-      </ul>
+
+      {/* Sign up information */}
       <form onSubmit={handleSubmit}>
         <div
           style={{
@@ -94,6 +85,7 @@ export const Signup = () => {
             marginBottom: "8px",
           }}
         >
+          {/* First name and Last name, combined in one row */}
           <div style={{ width: "48%" }}>
             <label style={{ display: "block", marginBottom: "4px" }}>
               First Name:
@@ -133,6 +125,8 @@ export const Signup = () => {
             />
           </div>
         </div>
+
+        {/* User name row, set a characters control */}
         <div style={{ marginBottom: "8px" }}>
           <label style={{ display: "block", marginBottom: "4px" }}>
             User Name:
@@ -156,6 +150,7 @@ export const Signup = () => {
           </small>
         </div>
 
+        {/* Email information */}
         <div style={{ marginBottom: "8px" }}>
           <label style={{ display: "block", marginBottom: "4px" }}>
             Email:
@@ -177,6 +172,7 @@ export const Signup = () => {
           />
         </div>
 
+        {/* Password and password confirmation */}
         <div style={{ marginBottom: "8px" }}>
           <label style={{ display: "block", marginBottom: "4px" }}>
             Password:
@@ -218,6 +214,7 @@ export const Signup = () => {
           />
         </div>
 
+        {/* Submit button */}
         <button
           type="submit"
           style={{
@@ -233,6 +230,18 @@ export const Signup = () => {
         >
           Signup
         </button>
+
+        {/* Show sign up message when done */}
+        {showAlertMessage && (
+          <div
+            className="alert alert-success d-flex align-items-center position-relative mt-3"
+            role="alert"
+            style={{ overflow: "hidden" }}
+          >
+            <i className="bi bi-check-circle-fill me-2"></i>
+            <div>Sign up successfully!</div>
+          </div>
+        )}
       </form>
     </div>
   );
