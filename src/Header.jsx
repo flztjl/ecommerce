@@ -15,14 +15,23 @@ export const Header = () => {
 
   useEffect(() => {
     if (query.length > 1) {
-      // Assuming searchFilter is a function passed from the parent that determines the filtering logic
       const fetchSuggestions = async () => {
         try {
-          const response = await fetch(
+          let response = await fetch(
             `https://dummyjson.com/products/search?q=${query}`
           );
-          const data = await response.json();
-          setSuggestions(data.products || []);
+          let data = await response.json();
+          let products = data.products || [];
+
+          if (products.length === 0) {
+            response = await fetch(
+              `https://dummyjson.com/products/category/${query}`
+            );
+            data = await response.json();
+            products = data.products || [];
+          }
+
+          setSuggestions(products);
         } catch (error) {
           console.error("Error fetching search results:", error);
         }
