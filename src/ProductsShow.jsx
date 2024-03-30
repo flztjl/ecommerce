@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import "./index.css";
 
 export function ProductsShow() {
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [showAddedMessage, setShowAddedMessage] = useState(false);
   const params = useParams();
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`https://dummyjson.com/products/${params.id}`)
@@ -23,9 +23,28 @@ export function ProductsShow() {
       );
   }, [params.id]);
 
-  const handleAddToCart = async () => {
-    console.log("Add to cart:", product.id, quantity);
-    navigate("/shoppingcart");
+  const handleAddToCart = () => {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const productToAdd = {
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      quantity: quantity,
+      thumbnail: product.images[0],
+    };
+    const existingProductIndex = cart.findIndex(
+      (item) => item.id === productToAdd.id
+    );
+
+    if (existingProductIndex !== -1) {
+      cart[existingProductIndex].quantity += quantity;
+    } else {
+      cart.push(product);
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    setShowAddedMessage(true);
+    setTimeout(() => setShowAddedMessage(false), 5000);
   };
 
   if (!product) {
@@ -82,9 +101,21 @@ export function ProductsShow() {
                   ))}
                 </select>
               </div>
-              <button className="btn btn-warning" onClick={handleAddToCart}>
-                Add to Cart
-              </button>
+              <div className="d-flex align-items-center mt-3">
+                <button className="btn btn-warning" onClick={handleAddToCart}>
+                  Add to Cart
+                </button>
+                {showAddedMessage && (
+                  <div
+                    className="alert alert-success d-flex align-items-center ms-2 mb-0 p-0"
+                    role="alert"
+                    style={{ overflow: "hidden" }}
+                  >
+                    <i className="bi bi-check-circle-fill me-2"></i>
+                    <div>Added to cart</div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

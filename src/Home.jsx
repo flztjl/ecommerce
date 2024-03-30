@@ -18,7 +18,7 @@ export const Home = () => {
       >
         <div className="display-4 fw-bold text-white mb-4">
           <h2 className="display-4 fw-bold text-white mb-4">
-            Online Shopping Can Never be Such Wonderful!
+            Online Shopping Can Never be So Wonderful!
           </h2>
           <Link
             to="/products"

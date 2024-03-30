@@ -1,14 +1,37 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { LogoutLink } from "./LogoutLink";
 import logoImage from "./assets/logo.jpg";
 
 export const Header = () => {
-  const [isSearchVisible, setIsSearchVisible] = useState(false);
-
-  const toggleSearch = () => {
-    setIsSearchVisible(!isSearchVisible);
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const navigate = useNavigate();
+  const handleSearchSelect = (itemId) => {
+    setSuggestions([]); // Clears the search suggestions
+    setQuery("");
+    navigate(`/products/${itemId}`);
   };
+
+  useEffect(() => {
+    if (query.length > 1) {
+      // Assuming searchFilter is a function passed from the parent that determines the filtering logic
+      const fetchSuggestions = async () => {
+        try {
+          const response = await fetch(
+            `https://dummyjson.com/products/search?q=${query}`
+          );
+          const data = await response.json();
+          setSuggestions(data.products || []);
+        } catch (error) {
+          console.error("Error fetching search results:", error);
+        }
+      };
+      fetchSuggestions();
+    } else {
+      setSuggestions([]);
+    }
+  }, [query]);
 
   return (
     <header>
@@ -32,8 +55,11 @@ export const Header = () => {
           >
             <span className="navbar-toggler-icon"></span>
           </button>
-          <div className="collapse navbar-collapse" id="navbarContent">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+          <div
+            className="collapse navbar-collapse justify-content-between"
+            id="navbarContent"
+          >
+            <ul className="navbar-nav">
               <li className="nav-item">
                 <Link className="nav-link" to="/">
                   Home
@@ -45,21 +71,58 @@ export const Header = () => {
                 </Link>
               </li>
             </ul>
-            <div className="d-flex align-items-center">
+
+            {/* Search Bar Container */}
+            <form
+              className="d-flex position-relative"
+              onSubmit={(e) => e.preventDefault()}
+              style={{ width: "50%" }}
+            >
+              <input
+                className="form-control"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                style={{ width: "calc(100% - 2.5rem)", paddingRight: "2.5rem" }}
+              />
               <button
-                className="btn btn-outline-success me-2"
-                onClick={toggleSearch}
+                className="btn position-absolute"
+                type="submit"
+                style={{
+                  right: "0",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
               >
                 <i className="bi bi-search"></i>
               </button>
-              {isSearchVisible && (
-                <input
-                  className="form-control me-2"
-                  type="search"
-                  placeholder="Search"
-                  aria-label="Search"
-                />
+              {suggestions.length > 0 && (
+                <div
+                  className="search-results position-absolute bg-white mt-1 w-100"
+                  style={{ zIndex: 1050, top: "100%" }}
+                >
+                  {suggestions.map((item) => (
+                    <div
+                      key={item.id}
+                      className="d-flex align-items-center p-2"
+                      onClick={() => handleSearchSelect(item.id)}
+                    >
+                      <img
+                        src={item.thumbnail}
+                        alt={item.title}
+                        style={{ width: "50px", marginRight: "10px" }}
+                      />
+                      {item.title}
+                    </div>
+                  ))}
+                </div>
               )}
+            </form>
+
+            {/* Account and Cart */}
+            <div className="d-flex align-items-center">
               <div className="dropdown">
                 <button
                   className="btn btn-outline-primary dropdown-toggle"

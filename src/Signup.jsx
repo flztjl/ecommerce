@@ -4,7 +4,9 @@ import "react-toastify/dist/ReactToastify.css";
 
 export const Signup = () => {
   const [errors, setErrors] = useState([]);
-  const [name, setName] = useState("");
+  const [userName, setUserName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
@@ -14,8 +16,9 @@ export const Signup = () => {
     event.preventDefault();
     setErrors([]);
     const formData = new FormData(event.target);
-    const firstName = formData.get("name").split(" ")[0];
-    const lastName = formData.get("name").split(" ")[1];
+    const firstName = formData.get("firstname");
+    const lastName = formData.get("lastname");
+    const userName = formData.get("username");
     const email = formData.get("email");
     const password = formData.get("password");
     const passwordConfirmation = formData.get("password_confirmation");
@@ -26,6 +29,7 @@ export const Signup = () => {
       body: JSON.stringify({
         firstName,
         lastName,
+        userName,
         email,
         password,
         passwordConfirmation,
@@ -34,11 +38,9 @@ export const Signup = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
+        console.log("User created successfully with ID:", data.id);
         localStorage.setItem("flashMessage", "User created successfully!");
-        toast.success("Signup successful! Redirecting to login page...", {
-          onClose: () => (window.location.href = "/"),
-          autoClose: 5000,
-        });
+        window.location.href = "/login";
       })
       .catch((error) => {
         console.error(error);
@@ -85,13 +87,61 @@ export const Signup = () => {
         ))}
       </ul>
       <form onSubmit={handleSubmit}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "8px",
+          }}
+        >
+          <div style={{ width: "48%" }}>
+            <label style={{ display: "block", marginBottom: "4px" }}>
+              First Name:
+            </label>
+            <input
+              name="firstname"
+              type="text"
+              value={firstName}
+              onChange={(event) => setFirstName(event.target.value)}
+              style={{
+                display: "block",
+                width: "100%",
+                padding: "8px",
+                marginBottom: "4px",
+                borderRadius: "4px",
+                border: "1px solid #ccc",
+              }}
+            />
+          </div>
+          <div style={{ width: "48%" }}>
+            <label style={{ display: "block", marginBottom: "4px" }}>
+              Last Name:
+            </label>
+            <input
+              name="lastname"
+              type="text"
+              value={lastName}
+              onChange={(event) => setLastName(event.target.value)}
+              style={{
+                display: "block",
+                width: "100%",
+                padding: "8px",
+                marginBottom: "4px",
+                borderRadius: "4px",
+                border: "1px solid #ccc",
+              }}
+            />
+          </div>
+        </div>
         <div style={{ marginBottom: "8px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>Name:</label>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            User Name:
+          </label>
           <input
-            name="name"
+            name="username"
             type="text"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
+            value={userName}
+            onChange={(event) => setUserName(event.target.value)}
             style={{
               display: "block",
               width: "100%",
@@ -102,9 +152,10 @@ export const Signup = () => {
             }}
           />
           <small style={{ display: "block", color: "#666", fontSize: "12px" }}>
-            {20 - name.length} characters remaining
+            {20 - userName.length} characters remaining
           </small>
         </div>
+
         <div style={{ marginBottom: "8px" }}>
           <label style={{ display: "block", marginBottom: "4px" }}>
             Email:

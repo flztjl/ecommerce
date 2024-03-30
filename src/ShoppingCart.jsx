@@ -2,38 +2,40 @@ import { useState, useEffect } from "react";
 
 export const ShoppingCart = () => {
   const [cartedProducts, setCartedProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetching all carts; you might want to adjust this to fetch a specific user's cart if possible
-    fetch("https://dummyjson.com/carts/user/1") // Adjusted for demonstration; replace '1' with the actual user ID if applicable
-      .then((res) => res.json())
-      .then((data) => {
-        // Assuming we want to display products from the user's cart, and the user has at least one cart
-        // Note: the "/carts/user/1" endpoint is hypothetical and used as an example. Use the correct endpoint as per the API documentation to fetch a specific cart or carts.
-        setCartedProducts(data.carts?.length > 0 ? data.carts[0].products : []);
-        setLoading(false);
-      })
-      .catch((error) =>
-        console.error("Error fetching carted products:", error)
-      );
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCartedProducts(cart);
   }, []);
 
-  const handleRemove = async (productId) => {
-    console.log("Removing product with ID:", productId);
-    // As the API might not support product removal via fetch, this is a placeholder
-    // Optimistically remove the product from the UI
-    setCartedProducts(
-      cartedProducts.filter((product) => product.id !== productId)
-    );
+  const handleQuantityChange = (productId, newQuantity) => {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart = cart.map((product) => {
+      if (product.id === productId) {
+        return { ...product, quantity: newQuantity };
+      }
+      return product;
+    });
+    localStorage.setItem("cart", JSON.stringify(cart));
+    setCartedProducts(cart);
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const handleRemove = (productId) => {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart = cart.filter((product) => product.id !== productId);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    setCartedProducts(cart);
+  };
 
   if (cartedProducts.length === 0) {
-    return <div>Your cart is empty.</div>;
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "50vh" }}
+      >
+        <h3 className="text-center text-muted">Your cart is empty.</h3>
+      </div>
+    );
   }
 
   return (
@@ -76,7 +78,29 @@ export const ShoppingCart = () => {
                 <p style={{ fontSize: "16px", fontWeight: "500" }}>
                   {product.title}
                 </p>
-                <p>Quantity: {product.quantity}</p>
+                <div className="mb-3">
+                  <label
+                    htmlFor={`quantity-${product.id}`}
+                    className="form-label"
+                  >
+                    Quantity:
+                  </label>
+                  <select
+                    id={`quantity-${product.id}`}
+                    name="quantity"
+                    value={product.quantity}
+                    onChange={(e) =>
+                      handleQuantityChange(product.id, Number(e.target.value))
+                    }
+                    className="form-select"
+                  >
+                    {[...Array(30).keys()].map((num) => (
+                      <option key={num + 1} value={num + 1}>
+                        {num + 1}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
             <div>

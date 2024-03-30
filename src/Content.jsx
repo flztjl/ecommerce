@@ -6,16 +6,13 @@ import { ProductsShow } from "./ProductsShow";
 import { Signup } from "./Signup";
 import { Login } from "./Login";
 import { Home } from "./Home";
-import { SearchBar } from "./SearchBar";
 import { ShoppingCart } from "./ShoppingCart";
 
-export const Content = (props) => {
+export const Content = () => {
   const [products, setProducts] = useState([]);
   const [currentProduct] = useState({});
-  const [searchFilter, setSearchFilter] = useState("");
 
   const handleIndexProducts = () => {
-    console.log("handleIndexProducts");
     axios.get("/products").then((response) => {
       console.log(response.data);
       setProducts(response.data);
@@ -78,14 +75,6 @@ export const Content = (props) => {
           }
         />
       </Routes>
-      {props.searchVisible && (
-        <SearchBar
-          setSearchVisible={props.setSearchVisible}
-          searchFilter={searchFilter}
-          setSearchFilter={setSearchFilter}
-          products={products}
-        />
-      )}
     </main>
   );
 };
